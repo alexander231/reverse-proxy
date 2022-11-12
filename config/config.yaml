@@ -9,4 +9,4 @@ proxy:
         - address: "upstream-service-a"
           port: 9090
         - address: "upstream-service-b"
-          port: 9090
+          port: 9090  
