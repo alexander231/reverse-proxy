@@ -1,0 +1,12 @@
+proxy:
+  listen:
+    address: "127.0.0.1"
+    port: 8080
+  services:
+    - name: my-service
+      domain: my-service.my-company.com
+      hosts:
+        - address: "upstream-service-a"
+          port: 9090
+        - address: "upstream-service-b"
+          port: 9090
