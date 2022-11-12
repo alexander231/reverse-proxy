@@ -27,9 +27,9 @@ type Host struct {
 	Port    int    `yaml:"port"`
 }
 
-func GetConfig(filename string) (*Config, error) {
+func GetConfig(filepath string) (*Config, error) {
 	cfg := &Config{}
-	fileBytes, err := os.ReadFile(filename)
+	fileBytes, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Reading file")
 	}
