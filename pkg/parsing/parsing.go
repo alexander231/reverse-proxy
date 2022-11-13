@@ -27,7 +27,7 @@ type Host struct {
 	Port    int    `yaml:"port"`
 }
 
-func GetConfig(filepath string) (*Config, error) {
+func NewConfig(filepath string) (*Config, error) {
 	cfg := &Config{}
 	fileBytes, err := os.ReadFile(filepath)
 	if err != nil {
@@ -37,5 +37,12 @@ func GetConfig(filepath string) (*Config, error) {
 		return nil, errors.Wrap(err, "Unmarshaling config")
 	}
 	return cfg, nil
+}
 
+func (c *Config) GetProxyPort() int {
+	return c.Proxy.Listen.Port
+}
+
+func (c *Config) GetProxyAddress() string {
+	return c.Proxy.Listen.Address
 }
