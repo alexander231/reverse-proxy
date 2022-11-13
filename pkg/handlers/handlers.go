@@ -2,12 +2,29 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+
+	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
 )
 
-func HandleRequest(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, http.StatusOK, "Hello Guys")
-	return
+func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println(lb.LbPolicy)
+		switch lb.LbPolicy {
+		case "ROUND_ROBIN":
+			{
+				respondWithJSON(w, http.StatusOK, "ROUND_ROBIN")
+				return
+			}
+		case "RANDOM":
+			{
+				respondWithJSON(w, http.StatusOK, "RANDOM")
+				return
+			}
+		}
+
+	}
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

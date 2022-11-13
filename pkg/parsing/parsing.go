@@ -8,21 +8,22 @@ import (
 )
 
 type Config struct {
-	Proxy Proxy `yaml:"proxy"`
+	Proxy proxy `yaml:"proxy"`
 }
 
-type Proxy struct {
-	Listen   Host      `yaml:"listen"`
+type proxy struct {
+	LbPolicy string    `yaml:"lbPolicy"`
+	Listen   host      `yaml:"listen"`
 	Services []Service `yaml:"services"`
 }
 
 type Service struct {
 	Name   string `yaml:"name"`
 	Domain string `yaml:"domain"`
-	Hosts  []Host `yaml:"hosts"`
+	Hosts  []host `yaml:"hosts"`
 }
 
-type Host struct {
+type host struct {
 	Address string `yaml:"address"`
 	Port    int    `yaml:"port"`
 }
@@ -45,4 +46,12 @@ func (c *Config) GetProxyPort() int {
 
 func (c *Config) GetProxyAddress() string {
 	return c.Proxy.Listen.Address
+}
+
+func (c *Config) GetServices() []Service {
+	return c.Proxy.Services
+}
+
+func (c *Config) GetLbPolicy() string {
+	return c.Proxy.LbPolicy
 }
