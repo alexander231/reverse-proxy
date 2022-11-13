@@ -3,11 +3,15 @@ package main
 import (
 	"log"
 
-	"github.com/alexander231/reverse-proxy/pkg/parsing"
 	"github.com/pkg/errors"
+
+	"github.com/alexander231/reverse-proxy/pkg/parsing"
+	"github.com/alexander231/reverse-proxy/pkg/server"
 )
 
-const filepath = "config/config.yaml"
+// edit this after finished to run project from root dir
+// const filepath = "config/config.yaml"
+const filepath = "../config/config.yaml"
 
 func main() {
 	if err := run(); err != nil {
@@ -16,10 +20,14 @@ func main() {
 }
 
 func run() error {
-	cfg, err := parsing.GetConfig(filepath)
+	log.Println("asdds")
+
+	cfg, err := parsing.NewConfig(filepath)
 	if err != nil {
 		return errors.Wrap(err, "Getting config")
 	}
-	log.Println(cfg)
+	if err := server.Start(cfg); err != nil {
+		return errors.Wrap(err, "Starting server")
+	}
 	return nil
 }
