@@ -11,7 +11,7 @@ import (
 
 // edit this after finished to run project from root dir
 // const filepath = "config/config.yaml"
-const filepath = "../config/config.yaml"
+const filepath = "config/config.yaml"
 
 func main() {
 	if err := run(); err != nil {
@@ -20,8 +20,6 @@ func main() {
 }
 
 func run() error {
-	log.Println("asdds")
-
 	cfg, err := parsing.NewConfig(filepath)
 	if err != nil {
 		return errors.Wrap(err, "Getting config")
