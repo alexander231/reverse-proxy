@@ -12,6 +12,12 @@ import (
 	"time"
 
 	"github.com/alexander231/reverse-proxy/pkg/parsing"
+	"github.com/pkg/errors"
+)
+
+const (
+	roundRobinPolicy = "ROUND_ROBIN"
+	randomPolicy     = "RANDOM"
 )
 
 type LoadBalancer struct {
@@ -41,7 +47,7 @@ func NewLoadBalancer(lbPolicy string, services []parsing.Service) *LoadBalancer 
 }
 
 func (lb *LoadBalancer) CountServices() int {
-	return len(lb.GetServices())
+	return len(lb.services)
 }
 
 func (lb *LoadBalancer) GetServices() map[string]service {
@@ -103,7 +109,6 @@ func (sp *serverPool) GetNextPeerRandom() *server {
 
 	// get the current index
 	curr := int(atomic.LoadUint64(&sp.current))
-	log.Printf("curr: %d randomIndex: %d", curr, randomIdx)
 	// if we have and alive server, use it and store if it is not the current one
 	if sp.servers[randomIdx].IsAlive() {
 		if randomIdx != curr {
@@ -130,6 +135,10 @@ func (svc *service) CountServers() int {
 	return len(svc.serverPool.servers)
 }
 
+func (svc *service) GetServerPool() *serverPool {
+	return svc.serverPool
+}
+
 func HealthCheck(lb *LoadBalancer) {
 	t := time.NewTicker(time.Second * 20)
 	for {
@@ -144,14 +153,32 @@ func HealthCheck(lb *LoadBalancer) {
 	}
 }
 
+func NextPeer(lbPolicy string, sp *serverPool) (*server, error) {
+	switch lbPolicy {
+	case roundRobinPolicy:
+		{
+			return sp.GetNextPeerRR(), nil
+		}
+	case randomPolicy:
+		{
+			return sp.GetNextPeerRandom(), nil
+		}
+	}
+	return nil, errors.New("Not a valid loadbalacing policy in config")
+}
+
 func buildServices(services []parsing.Service) map[string]service {
 	lbServices := make(map[string]service)
 	for _, svc := range services {
 		servers := make([]*server, 0)
 		for _, host := range svc.Hosts {
+			// get the URL for each server
 			serverURL, _ := url.Parse(fmt.Sprintf("%s:%d", host.Address, host.Port))
+			// set if that server is alive
 			alive := isServerAlive(serverURL)
-			servers = append(servers, &server{URL: serverURL, tcpHealthcheck: alive})
+			// set proxy for each server
+			proxy := httputil.NewSingleHostReverseProxy(serverURL)
+			servers = append(servers, &server{URL: serverURL, tcpHealthcheck: alive, ReverseProxy: proxy})
 		}
 		srvPool := &serverPool{servers: servers}
 		lbServices[svc.Domain] = service{name: svc.Name, domain: svc.Domain, serverPool: srvPool}

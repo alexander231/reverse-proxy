@@ -1,5 +1,5 @@
 proxy:
-  lbPolicy: "ROUND_ROBIN"
+  lbPolicy: "RANDOM"
   listen:
     address: "127.0.0.1"
     port: 8080
@@ -9,5 +9,9 @@ proxy:
       hosts:
         - address: "http://localhost"
           port: 9090
-        - address: "upstream-service-b"
-          port: 9090  
+        - address: "http://localhost"
+          port: 9091  
+        - address: "http://localhost"
+          port: 9092
+        - address: "http://localhost"
+          port: 9093

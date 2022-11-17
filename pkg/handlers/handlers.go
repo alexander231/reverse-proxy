@@ -3,37 +3,34 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
 )
 
-const (
-	roundRobinPolicy = "ROUND_ROBIN"
-	randomPolicy     = "RANDOM"
-)
-
 func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostHeader := r.Host
-		if _, ok := lb.GetServices()[hostHeader]; !ok {
+		lbServices := lb.GetServices()
+		svc, ok := lbServices[hostHeader]
+		if !ok {
 			respondWithError(w, http.StatusBadRequest, fmt.Sprintf("The service domain %s is not present in the current configuration", hostHeader))
 			return
 		}
-		switch lb.GetLbPolicy() {
-		case roundRobinPolicy:
-			{
-
-				respondWithJSON(w, http.StatusOK, "ROUND_ROBIN")
-				return
-			}
-		case randomPolicy:
-			{
-				respondWithJSON(w, http.StatusOK, "RANDOM")
-				return
-			}
+		sp := svc.GetServerPool()
+		peer, err := loadbalancer.NextPeer(lb.GetLbPolicy(), sp)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+			return
 		}
-
+		if peer != nil {
+			log.Println(peer.URL)
+			peer.ReverseProxy.ServeHTTP(w, r)
+			return
+		}
+		respondWithError(w, http.StatusServiceUnavailable, fmt.Sprintf("No server available for the service domain %s", hostHeader))
+		return
 	}
 }
 
