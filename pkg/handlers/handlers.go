@@ -2,22 +2,31 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
 )
 
+const (
+	roundRobinPolicy = "ROUND_ROBIN"
+	randomPolicy     = "RANDOM"
+)
+
 func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println(lb.GetLbPolicy())
+		hostHeader := r.Host
+		if hostHeader == "" {
+			respondWithError(w, http.StatusBadRequest, "Please provide a domain service in the Host header")
+			return
+		}
 		switch lb.GetLbPolicy() {
-		case "ROUND_ROBIN":
+		case roundRobinPolicy:
 			{
+
 				respondWithJSON(w, http.StatusOK, "ROUND_ROBIN")
 				return
 			}
-		case "RANDOM":
+		case randomPolicy:
 			{
 				respondWithJSON(w, http.StatusOK, "RANDOM")
 				return

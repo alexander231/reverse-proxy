@@ -7,23 +7,12 @@ import (
 
 	"github.com/alexander231/reverse-proxy/pkg/handlers"
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
-	"github.com/alexander231/reverse-proxy/pkg/parsing"
-	"github.com/pkg/errors"
 )
 
-func Start(cfg *parsing.Config) error {
-	// log.Println(cfg)
-	lb := loadbalancer.NewLoadBalancer(cfg.GetLbPolicy(), cfg.GetServices())
-	log.Println(lb.GetServices())
+func Start(lb *loadbalancer.LoadBalancer, address string, port int) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handlers.HandleRequest(lb))
 
-	PORT := cfg.GetProxyPort()
-	ADDRESS := cfg.GetProxyAddress()
-	log.Printf("Serving requests at %s:%d", ADDRESS, PORT)
-
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux); err != nil {
-		return errors.Wrap(err, "Listening and serving")
-	}
-	return nil
+	log.Printf("Serving requests at %s:%d", address, port)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 }
