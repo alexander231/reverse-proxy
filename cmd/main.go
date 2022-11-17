@@ -30,7 +30,7 @@ func run() error {
 
 	lb := loadbalancer.NewLoadBalancer(cfg.GetLbPolicy(), cfg.GetServices())
 	if lb.CountServices() == 0 {
-		return errors.Wrap(err, "Please provide one or more services")
+		return errors.Wrap(err, "Please provide one or more services in the configuration")
 	}
 
 	go loadbalancer.HealthCheck(lb)

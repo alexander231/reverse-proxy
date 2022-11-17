@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
@@ -15,8 +16,8 @@ const (
 func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostHeader := r.Host
-		if hostHeader == "" {
-			respondWithError(w, http.StatusBadRequest, "Please provide a domain service in the Host header")
+		if _, ok := lb.GetServices()[hostHeader]; !ok {
+			respondWithError(w, http.StatusBadRequest, fmt.Sprintf("The service domain %s is not present in the current configuration", hostHeader))
 			return
 		}
 		switch lb.GetLbPolicy() {
