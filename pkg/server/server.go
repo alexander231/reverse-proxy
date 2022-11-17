@@ -12,8 +12,9 @@ import (
 )
 
 func Start(cfg *parsing.Config) error {
-	log.Println(cfg)
-	lb := loadbalancer.NewLoadBalancer(cfg.GetServices())
+	// log.Println(cfg)
+	lb := loadbalancer.NewLoadBalancer(cfg.GetLbPolicy(), cfg.GetServices())
+	log.Println(lb.GetServices())
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handlers.HandleRequest(lb))
 

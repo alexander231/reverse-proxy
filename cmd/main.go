@@ -24,7 +24,6 @@ func run() error {
 	if err != nil {
 		return errors.Wrap(err, "Getting config")
 	}
-	log.Println(cfg.GetServices())
 	if err := server.Start(cfg); err != nil {
 		return errors.Wrap(err, "Starting server")
 	}

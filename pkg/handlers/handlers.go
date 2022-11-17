@@ -10,8 +10,8 @@ import (
 
 func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println(lb.LbPolicy)
-		switch lb.LbPolicy {
+		log.Println(lb.GetLbPolicy())
+		switch lb.GetLbPolicy() {
 		case "ROUND_ROBIN":
 			{
 				respondWithJSON(w, http.StatusOK, "ROUND_ROBIN")
