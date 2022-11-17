@@ -72,12 +72,12 @@ func (s *serverPool) NextIndex() int {
 
 // GetNextPeer returns next active peer to take a connection
 func (s *serverPool) GetNextPeerRR() *server {
-	// loop entire backends to find out an Alive backend
+	// loop the servers to find a server that is alive
 	next := s.NextIndex()
 	l := len(s.servers) + next // start from next and move a full cycle
 	for i := next; i < l; i++ {
 		idx := i % len(s.servers) // take an index by modding with length
-		// if we have an alive backend, use it and store if its not the original one
+		// if we have an alive server, use it and store if it is not the original one
 		if s.servers[idx].IsAlive() {
 			if i != next {
 				atomic.StoreUint64(&s.current, uint64(idx)) // mark the current one
@@ -89,12 +89,16 @@ func (s *serverPool) GetNextPeerRR() *server {
 }
 
 func (s *serverPool) GetNextPeerRandom() *server {
+	// generate random source
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
 	l := len(s.servers)
+	// generate random index
 	randomIdx := random.Intn(l)
+	// get the current index
 	curr := int(atomic.LoadUint64(&s.current))
 	log.Printf("curr: %d randomIndex: %d", curr, randomIdx)
+	// if we have and alive server, use it and store if it is not the current one
 	if s.servers[randomIdx].IsAlive() {
 		if randomIdx != curr {
 			atomic.StoreUint64(&s.current, uint64(randomIdx)) // mark the current one
