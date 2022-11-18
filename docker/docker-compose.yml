@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  reverse-proxy:
+    build: .
+    ports:
+      - "8080:8080"
+  host1:
+    image: "redis:alpine"
+  host2:
+    image: "redis:alpine"
+  host3:
+    image: "redis:alpine"
+  host4:
+    image: "redis:alpine"

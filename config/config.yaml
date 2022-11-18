@@ -1,0 +1,17 @@
+proxy:
+  lbPolicy: "RANDOM"
+  listen:
+    address: "127.0.0.1"
+    port: 8080
+  services:
+    - name: my-service
+      domain: my-service.localhost
+      hosts:
+        - address: "http://localhost"
+          port: 9090
+        - address: "http://localhost"
+          port: 9091  
+        - address: "http://localhost"
+          port: 9092
+        - address: "http://localhost"
+          port: 9093
