@@ -5,7 +5,7 @@ proxy:
     port: 8080
   services:
     - name: my-service
-      domain: my-service.my-company.com
+      domain: my-service.localhost
       hosts:
         - address: "http://localhost"
           port: 9090
