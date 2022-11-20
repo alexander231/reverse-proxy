@@ -6,7 +6,6 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-RUN ls
 COPY cmd ./cmd
 COPY /config ./config
 COPY /pkg ./pkg
