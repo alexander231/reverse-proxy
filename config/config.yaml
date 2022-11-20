@@ -4,14 +4,25 @@ proxy:
     address: "127.0.0.1"
     port: 8080
   services:
-    - name: my-service
-      domain: my-service.localhost
+    - name: service1
+      domain: service1.com
       hosts:
-        - address: "http://localhost"
-          port: 9090
-        - address: "http://localhost"
-          port: 9091  
-        - address: "http://localhost"
-          port: 9092
-        - address: "http://localhost"
-          port: 9093
+        - address: "http://s1_host0"
+          port: 80
+        - address: "http://s1_host1"
+          port: 80 
+        - address: "http://s1_host2"
+          port: 80
+        - address: "http://s1_host3" # this is a failing host for the demo
+          port: 80
+    - name: service2
+      domain: service2.com
+      hosts:
+        - address: "http://s2_host0"
+          port: 80
+        - address: "http://s2_host1"
+          port: 80 
+        - address: "http://s2_host2"
+          port: 80
+        - address: "http://s2_host3" # this is a failing host for the demo
+          port: 80
