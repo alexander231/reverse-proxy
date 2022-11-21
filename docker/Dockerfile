@@ -1,4 +1,3 @@
-# builder
 FROM golang:1.19-alpine AS build
 
 WORKDIR /app
@@ -13,7 +12,6 @@ COPY /pkg ./pkg
 
 RUN CGO_ENABLED=0 go build -o bin/reverse-proxy cmd/main.go
 
-# runner
 FROM scratch
 
 COPY --from=build /app/bin/reverse-proxy /

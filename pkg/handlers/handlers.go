@@ -9,17 +9,17 @@ import (
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
 )
 
-func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
+func HandleRequest(lb loadbalancer.LoadBalancer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostHeader := r.Host
 		lbServices := lb.GetServices()
 		svc, ok := lbServices[hostHeader]
 		if !ok {
-			respondWithError(w, http.StatusBadRequest, fmt.Sprintf("The service domain %s is not present in the current configuration", hostHeader))
+			respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Please provice a service domain in the Host header, current Host header: %s", hostHeader))
 			return
 		}
 		sp := svc.GetServerPool()
-		peer, err := loadbalancer.NextPeer(lb.GetLbPolicy(), sp)
+		peer, err := lb.NextPeer(sp)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 			return

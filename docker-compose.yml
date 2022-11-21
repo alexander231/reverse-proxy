@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  s1_host0:
+    image: kennethreitz/httpbin
+    ports: 
+      - "9090:80"
+  s1_host1:
+    image: kennethreitz/httpbin
+    ports: 
+      - "9091:80"
+  s1_host2:
+    image: kennethreitz/httpbin
+    ports: 
+      - "9092:80"
+  s2_host0:
+    image: kennethreitz/httpbin
+    ports: 
+      - "9093:80"
+  s2_host1:
+    image: kennethreitz/httpbin
+    ports: 
+      - "9094:80"
+  s2_host2:
+    image: kennethreitz/httpbin
+    ports: 
+      - "9095:80"
+  app:
+    build: 
+      context: . 
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "8080:8080"

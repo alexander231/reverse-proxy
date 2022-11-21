@@ -28,12 +28,12 @@ func run() error {
 		return errors.Wrap(err, "Getting config")
 	}
 
-	lb := loadbalancer.NewLoadBalancer(cfg.GetLbPolicy(), cfg.GetServices())
+	lb := loadbalancer.NewLoadBalancer(cfg)
 	if lb.CountServices() == 0 {
 		return errors.Wrap(err, "Please provide one or more services in the configuration")
 	}
 
-	go loadbalancer.HealthCheck(lb)
+	go loadbalancer.HealthCheck(lb.GetServices())
 
 	port := cfg.GetProxyPort()
 	address := cfg.GetProxyAddress()

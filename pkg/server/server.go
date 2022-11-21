@@ -9,7 +9,7 @@ import (
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
 )
 
-func Start(lb *loadbalancer.LoadBalancer, address string, port int) {
+func Start(lb loadbalancer.LoadBalancer, address string, port int) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handlers.HandleRequest(lb))
 
