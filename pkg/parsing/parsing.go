@@ -7,7 +7,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Config struct {
+type Config interface {
+	GetProxyPort() int
+	GetProxyAddress() string
+	GetServices() []Service
+	GetLbPolicy() string
+}
+type config struct {
 	Proxy proxy `yaml:"proxy"`
 }
 
@@ -28,8 +34,8 @@ type host struct {
 	Port    int    `yaml:"port"`
 }
 
-func NewConfig(filepath string) (*Config, error) {
-	cfg := &Config{}
+func NewConfig(filepath string) (*config, error) {
+	cfg := &config{}
 	fileBytes, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Reading file")
@@ -40,18 +46,18 @@ func NewConfig(filepath string) (*Config, error) {
 	return cfg, nil
 }
 
-func (c *Config) GetProxyPort() int {
+func (c *config) GetProxyPort() int {
 	return c.Proxy.Listen.Port
 }
 
-func (c *Config) GetProxyAddress() string {
+func (c *config) GetProxyAddress() string {
 	return c.Proxy.Listen.Address
 }
 
-func (c *Config) GetServices() []Service {
+func (c *config) GetServices() []Service {
 	return c.Proxy.Services
 }
 
-func (c *Config) GetLbPolicy() string {
+func (c *config) GetLbPolicy() string {
 	return c.Proxy.LbPolicy
 }

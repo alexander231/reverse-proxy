@@ -9,7 +9,7 @@ import (
 	"github.com/alexander231/reverse-proxy/pkg/loadbalancer"
 )
 
-func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
+func HandleRequest(lb loadbalancer.LoadBalancer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hostHeader := r.Host
 		lbServices := lb.GetServices()
@@ -19,7 +19,7 @@ func HandleRequest(lb *loadbalancer.LoadBalancer) http.HandlerFunc {
 			return
 		}
 		sp := svc.GetServerPool()
-		peer, err := loadbalancer.NextPeer(lb.GetLbPolicy(), sp)
+		peer, err := lb.NextPeer(sp)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 			return
