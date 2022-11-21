@@ -57,7 +57,7 @@ proxy:
 ```
 * proxy.lbPolicy specifies the load-balancing strategy that the reverse proxy uses to forward the incoming requests
 * all the fields of proxy.listen are used for the configuration of the reverse proxy
-* all the field of proxy.services are service instances with multiple hosts that will receive the redirected requests
+* all the fields of proxy.services are service instances with multiple hosts that will receive the redirected requests
 
 For the demo [docker compose](https://docs.docker.com/compose/install/) was used to build and run the container of the application and of the service instances (2 services with 3 hosts each). For the container images of the hosts [httpbin](https://httpbin.org/) was used.
 ## Docker compose file
